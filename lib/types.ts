@@ -74,7 +74,8 @@ export type Room = {
     currency: string;
 };
 
-export type StaySearch = { checkIn: string; checkOut: string; rooms: number; guests: number };
+// guests = adults + children; a child's age is null until chosen
+export type StaySearch = { checkIn: string; checkOut: string; rooms: number; guests: number; children: number; childAges: (number | null)[] };
 
 // Room detail page: everything is derived from the room product's properties in the API
 export type Fact = {

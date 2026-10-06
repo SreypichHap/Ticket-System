@@ -1,11 +1,12 @@
 import type { Room, StaySearch } from '@/lib/types';
+import { toQuery } from '@/lib/stay-search';
 import RoomCard from './RoomCard';
 
 type Props = { slug: string; rooms: Room[]; search: StaySearch; nights: number; className?: string };
 
 // "Book" on a card opens that room's detail page, where the booking is confirmed.
 const RoomList = ({ slug, rooms, search, nights, className = '' }: Props) => {
-    const query = new URLSearchParams({ checkIn: search.checkIn, checkOut: search.checkOut, rooms: String(search.rooms), guests: String(search.guests) });
+    const query = toQuery(search);
 
     return (
         <ul className={`flex flex-col gap-4 ${className}`}>

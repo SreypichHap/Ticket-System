@@ -21,6 +21,17 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Stay search screen */
+  --color-search-bg: #F7F6FB;
+  --color-search-border: #E6E3EF;
+  --color-search-text: #1B1830;
+  --color-search-muted: #5E5A72;
+  --color-search-disabled: #B4B0C4;
+  --color-search-accent: #5B3FD6;
+  --color-search-accent-text: #4A2FC4;
+  --color-search-soft: #EEEAFD;
+  --color-search-tint: #F3F0FE;
 }
 
 

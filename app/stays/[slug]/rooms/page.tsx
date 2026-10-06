@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Navbar from '@/component/public/navbar';
+import PageContainer from '@/component/layout/PageContainer';
 import RoomsPageHeader from '@/component/rooms/RoomsPageHeader';
 import RoomList from '@/component/rooms/RoomList';
+import SearchScreen from '@/component/search/SearchScreen';
 import { getStayRooms } from '@/lib/stays';
 import { nightsBetween, parseSearch } from '@/lib/stay-search';
 
@@ -19,18 +20,26 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
 const Page = async ({ params, searchParams }: Props) => {
     const data = await getStayRooms((await params).slug);
     if (!data) notFound();
-    const search = parseSearch(await searchParams);
-    const most = (values: (number | null)[]) => Math.max(0, ...values.map((v) => v ?? 0)) || undefined;
+    const query = await searchParams;
+    const search = parseSearch(query);
+
+    // "Change" on the room list opens the search screen on the same route
+    if (query.change) {
+        const most = (values: (number | null)[]) => Math.max(0, ...values.map((v) => v ?? 0)) || undefined;
+        return (
+            <PageContainer width='narrow' className='pb-28 pt-8'>
+                <SearchScreen search={search} maxRooms={most(data.rooms.map((r) => r.maxRooms))} maxGuestsPerRoom={most(data.rooms.map((r) => r.maxGuests))} />
+            </PageContainer>
+        );
+    }
+
     const nights = nightsBetween(search.checkIn, search.checkOut);
 
     return (
-        <div className={`flex min-h-screen flex-col bg-[#F6F4FB]`}>
-            <Navbar />
-            <main className='mx-auto w-full max-w-[1080px] flex-1 px-6 pt-8'>
-                <RoomsPageHeader stayName={data.stayName} stayHref={`/stays/${(await params).slug}`} roomCount={data.rooms.length} search={search} maxRooms={most(data.rooms.map((r) => r.maxRooms))} maxGuests={most(data.rooms.map((r) => r.maxGuests))} />
-                <RoomList slug={(await params).slug} rooms={data.rooms} search={search} nights={nights} />
-            </main>
-        </div>
+        <PageContainer width='narrow'>
+            <RoomsPageHeader stayName={data.stayName} stayHref={`/stays/${(await params).slug}`} roomCount={data.rooms.length} search={search} />
+            <RoomList slug={(await params).slug} rooms={data.rooms} search={search} nights={nights} />
+        </PageContainer>
     );
 };
 
