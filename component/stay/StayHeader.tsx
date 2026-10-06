@@ -19,8 +19,8 @@ const StayHeader = ({ stay, className = '' }: Props) => (
                     <span className='text-sm font-medium text-[#5E5775]'>{stay.stars}-star stay</span>
                 </div>
             )}
-            <h1 className={`${HEADING} my-2 text-4xl leading-tight tracking-tight text-[#1A1530] md:text-[44px]`}>{stay.name}</h1>
-            <p className='flex items-center gap-1.5 text-[15px] text-[#5E5775]'>
+            <h1 className={`${HEADING} my-2 text-2xl leading-tight tracking-tight text-[#1A1530] md:text-[32px]`}>{stay.name}</h1>
+            <p className='flex items-center gap-1.5 text-sm text-[#5E5775]'>
                 <MapPin size={16} aria-hidden='true' />
                 {stay.area}
             </p>

@@ -17,7 +17,7 @@ const MobileBookingBar = ({ stay, className = '' }: Props) => (
         )}
         <Link
             href={`/stays/${stay.slug}/rooms`}
-            className='flex h-12 flex-1 items-center justify-center rounded-[14px] bg-[#5B21B6] font-bold text-white hover:bg-[#4C1D95] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#DCD4EE]'
+            className='flex h-12 flex-1 items-center justify-center rounded-[14px] bg-[#5B21B6] font-semibold text-white hover:bg-[#4C1D95] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#DCD4EE]'
         >
             View room options
         </Link>

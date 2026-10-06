@@ -20,14 +20,15 @@ const Page = async ({ params, searchParams }: Props) => {
     const data = await getStayRooms((await params).slug);
     if (!data) notFound();
     const search = parseSearch(await searchParams);
+    const most = (values: (number | null)[]) => Math.max(0, ...values.map((v) => v ?? 0)) || undefined;
     const nights = nightsBetween(search.checkIn, search.checkOut);
 
     return (
         <div className={`flex min-h-screen flex-col bg-[#F6F4FB]`}>
             <Navbar />
             <main className='mx-auto w-full max-w-[1080px] flex-1 px-6 pt-8'>
-                <RoomsPageHeader stayName={data.stayName} stayHref={`/stays/${(await params).slug}`} roomCount={data.rooms.length} search={search} />
-                <RoomList stayId={data.stayId} rooms={data.rooms} search={search} nights={nights} />
+                <RoomsPageHeader stayName={data.stayName} stayHref={`/stays/${(await params).slug}`} roomCount={data.rooms.length} search={search} maxRooms={most(data.rooms.map((r) => r.maxRooms))} maxGuests={most(data.rooms.map((r) => r.maxGuests))} />
+                <RoomList slug={(await params).slug} rooms={data.rooms} search={search} nights={nights} />
             </main>
         </div>
     );

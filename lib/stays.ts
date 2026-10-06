@@ -1,7 +1,8 @@
 // Stay (hotel) detail, read from the BookMe+ API. A stay is a vendor; its rooms are the vendor's products in the
 // "Accommodations" taxon. Anything the API does not provide is left empty, and the page hides that block.
 import { apiGet, assetUrl, included } from './api';
-import type { Room, RoomAttribute, Stay, ThingToKnow } from './types';
+import { parseRoomProduct, roomLimit } from './rooms';
+import type { Fact, Room, RoomAttribute, Stay, ThingToKnow } from './types';
 
 type Json = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -86,26 +87,21 @@ export const getStay = async (slug: string): Promise<Stay | null> => {
     };
 };
 
-// Room attributes are recognised from the property's value ("Max 8 Guests", "1 king bed", "Room Size 37 m²", "Garden View");
-// everything else ("Free Wifi", "Free cancellation") is a perk.
-const attributeKind = (value: string): RoomAttribute['kind'] | null =>
-    /guest|sleeps/i.test(value) ? 'guests' : /m²|m2|sqm|sq\.? ?m/i.test(value) ? 'size' : /view/i.test(value) ? 'view' : /\bbeds?\b|bedroom/i.test(value) ? 'bed' : null;
-
+// The card shows the same facts the room detail page does (both come from parseRoomProduct)
 const toRoom = (p: Json, lookup: Map<string, Json>): Room => {
-    const values: string[] = [];
-    for (const ref of p.relationships.product_properties?.data ?? []) {
-        const value = String(lookup.get(`${ref.type}:${ref.id}`)?.attributes?.value ?? '').trim();
-        if (value && !/^placeholder$/i.test(value) && !values.some((v) => v.toLowerCase() === value.toLowerCase())) values.push(value);
-    }
-    const attributes: RoomAttribute[] = [];
-    const perks: string[] = [];
-    for (const label of values) {
-        const kind = attributeKind(label);
-        if (!kind) perks.push(label);
-        else if (!attributes.some((a) => a.kind === kind)) attributes.push({ kind, label });
-    }
-    const order = ['guests', 'bed', 'size', 'view'];
-    attributes.sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind));
+    const { facts, facilities, thingsToKnow } = parseRoomProduct(p, lookup);
+    const fact = (kind: Fact['kind']) => facts.find((f) => f.kind === kind)?.label;
+    const guests = fact('maxGuests') ?? ['adults', 'kids'].map((k) => fact(k as Fact['kind'])?.replace(/ \(.*\)$/, '')).filter(Boolean).join(' · ');
+    const attributes: RoomAttribute[] = [
+        { kind: 'guests', label: guests },
+        { kind: 'bed', label: fact('bedrooms') ?? '' },
+        { kind: 'size', label: fact('size') ?? '' },
+        { kind: 'view', label: fact('view') ?? '' },
+    ].filter((a): a is RoomAttribute => Boolean(a.label));
+    // Guests one room sleeps: the "Max N guests" fact, else the adults and kids of the default variant
+    const maxGuests = guests ? (guests.match(/\d+/g) ?? []).reduce((sum, n) => sum + Number(n), 0) || null : null;
+    // Perks: the booking terms first (free cancellation...), then the room's facilities
+    const amenities = [...new Set([...thingsToKnow.flatMap((t) => (t.type === 'notice' ? [t.text] : [])), ...facilities.flatMap((g) => g.items)])];
 
     const name = p.attributes.name as string;
     return {
@@ -116,12 +112,12 @@ const toRoom = (p: Json, lookup: Map<string, Json>): Room => {
             .filter(Boolean)
             .map((src: string, i: number) => ({ src, alt: `${name} – photo ${i + 1}` })),
         attributes,
-        perks: perks.slice(0, 4),
-        amenities: values,
+        perks: amenities.slice(0, 4),
+        amenities,
         description: String(p.attributes.description ?? '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(),
-        // "Book now" products confirm immediately; "request to book" ones wait for the host
-        instantBooking: p.attributes.action_button === 'buy_now',
         soldOut: !p.attributes.available,
+        maxRooms: roomLimit(p, lookup),
+        maxGuests,
         pricePerNight: Number(p.attributes.price) || 0,
         currency: (p.attributes.currency as string) ?? 'USD',
     };
@@ -140,8 +136,8 @@ export const getStayRooms = async (slug: string): Promise<{ stayId: string; stay
     const productsJson = await apiGet('products', {
         per_page: '100',
         'filter[taxons]': ACCOMMODATIONS_TAXON_ID,
-        include: 'images,product_properties',
-        'fields[product]': 'name,description,price,currency,available,action_button,images,vendor,product_properties',
+        include: 'images,product_properties,default_variant.option_values.option_type,primary_variant.option_values.option_type,default_variant.stock_items',
+        'fields[product]': 'name,description,price,currency,available,images,vendor,product_properties,default_variant,primary_variant',
     }).catch(() => ({ data: [] }));
     const lookup = included(productsJson);
     const rooms = (productsJson.data as Json[])

@@ -24,7 +24,7 @@ const Page = async ({ params }: Props) => {
         <div className={`min-h-screen bg-[#F6F4FB]`}>
             <Navbar />
             <main className='mx-auto max-w-[1180px] px-6 pb-28 pt-6 lg:pb-16'>
-                <PhotoGallery photos={stay.photos} />
+                <PhotoGallery photos={stay.photos} backHref='/' />
                 <StayHeader stay={stay} />
                 <div className='grid items-start gap-4 pt-5 lg:grid-cols-[1fr_380px] lg:gap-7'>
                     <div className='flex min-w-0 flex-col gap-4'>

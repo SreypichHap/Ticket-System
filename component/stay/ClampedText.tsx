@@ -24,8 +24,8 @@ const ClampedText = ({ children, className = '' }: Props) => {
 
     return (
         <div className={className}>
-            {/* 4 lines of 16px / leading-relaxed (1.625) plus the 10px gaps between paragraphs are clamped by max-height */}
-            <div ref={ref} className={`flex flex-col gap-2.5 overflow-hidden ${expanded ? '' : 'max-h-[calc(4*1.625*16px)]'}`}>
+            {/* 4 lines of 14px / leading-7 (28px) plus the 10px gaps between paragraphs are clamped by max-height */}
+            <div ref={ref} className={`flex flex-col gap-2.5 overflow-hidden ${expanded ? '' : 'max-h-28'}`}>
                 {children}
             </div>
             {(overflows || expanded) && (
@@ -33,7 +33,7 @@ const ClampedText = ({ children, className = '' }: Props) => {
                     type='button'
                     aria-expanded={expanded}
                     onClick={() => setExpanded((e) => !e)}
-                    className='mt-1 min-h-11 text-[15px] font-bold text-[#5B21B6] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#EDE7FB]'
+                    className='mt-1 min-h-11 text-sm font-semibold text-[#5B21B6] underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#EDE7FB]'
                 >
                     {expanded ? 'Show less' : 'Read more'}
                 </button>

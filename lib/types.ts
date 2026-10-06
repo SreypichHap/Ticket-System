@@ -64,12 +64,42 @@ export type Room = {
     // Every property the API lists for the room (shown in the details sheet)
     amenities: string[];
     description: string;
-    instantBooking: boolean;
     // Only set when the API reports a count
     roomsLeft?: number;
     soldOut: boolean;
+    // Rooms one booking can take and guests one room sleeps, from the API; null when it gives none
+    maxRooms: number | null;
+    maxGuests: number | null;
     pricePerNight: number;
     currency: string;
 };
 
 export type StaySearch = { checkIn: string; checkOut: string; rooms: number; guests: number };
+
+// Room detail page: everything is derived from the room product's properties in the API
+export type Fact = {
+    kind: 'adults' | 'kids' | 'propertyType' | 'bedrooms' | 'bathrooms' | 'maxGuests' | 'sofas' | 'wifi' | 'size' | 'view';
+    label: string;
+};
+
+export type FacilityGroup = { id: string; name: string; items: string[] };
+
+export type RoomDetail = {
+    id: string;
+    stayId: string;
+    stayName: string;
+    name: string;
+    // "Private villa", ... ; empty when the API does not say
+    roomType: string;
+    pricePerNight: number;
+    currency: string;
+    available: boolean;
+    // Most rooms one booking may take (the API's max_quantity_per_order); null when the API sets no limit
+    maxRooms: number | null;
+    // The room's description as sanitized-on-render HTML; empty when the API has none
+    description: string;
+    photos: Photo[];
+    facts: Fact[];
+    facilities: FacilityGroup[];
+    thingsToKnow: ThingToKnow[];
+};
