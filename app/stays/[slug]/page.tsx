@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Navbar from '@/component/public/navbar';
+import PageContainer from '@/component/layout/PageContainer';
 import PhotoGallery from '@/component/stay/PhotoGallery';
 import StayHeader from '@/component/stay/StayHeader';
 import AboutCard from '@/component/stay/AboutCard';
@@ -21,23 +21,19 @@ const Page = async ({ params }: Props) => {
     if (!stay) notFound();
 
     return (
-        <div className={`min-h-screen bg-[#F6F4FB]`}>
-            <Navbar />
-            <main className='mx-auto max-w-[1180px] px-6 pb-28 pt-6 lg:pb-16'>
-                <PhotoGallery photos={stay.photos} backHref='/' />
-                <StayHeader stay={stay} />
-                <div className='grid items-start gap-4 pt-5 lg:grid-cols-[1fr_380px] lg:gap-7'>
-                    <div className='flex min-w-0 flex-col gap-4'>
-                        {stay.description.length > 0 && <AboutCard paragraphs={stay.description} />}
-                        {stay.thingsToKnow.length > 0 && <ThingsToKnowCard items={stay.thingsToKnow} />}
-                    </div>
-                    <div className='hidden flex-col gap-4 lg:sticky lg:top-6 lg:flex'>
-                        <BookingActions stay={stay} />
-                    </div>
+        <PageContainer className='pb-28 pt-6 lg:pb-16' footer={<MobileBookingBar stay={stay} />}>
+            <PhotoGallery photos={stay.photos} backHref='/' />
+            <StayHeader stay={stay} />
+            <div className='grid items-start gap-4 pt-5 lg:grid-cols-[1fr_380px] lg:gap-7'>
+                <div className='flex min-w-0 flex-col gap-4'>
+                    {stay.description.length > 0 && <AboutCard paragraphs={stay.description} />}
+                    {stay.thingsToKnow.length > 0 && <ThingsToKnowCard items={stay.thingsToKnow} />}
                 </div>
-            </main>
-            <MobileBookingBar stay={stay} />
-        </div>
+                <div className='hidden flex-col gap-4 lg:sticky lg:top-6 lg:flex'>
+                    <BookingActions stay={stay} />
+                </div>
+            </div>
+        </PageContainer>
     );
 };
 

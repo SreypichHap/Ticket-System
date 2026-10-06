@@ -5,9 +5,9 @@ import { plural } from '@/lib/stay-search';
 import StaySearchButton from './StaySearchButton';
 import { HEADING } from '../stay/fonts';
 
-type Props = { stayName: string; stayHref: string; roomCount: number; search: StaySearch; maxRooms?: number; maxGuests?: number; className?: string };
+type Props = { stayName: string; stayHref: string; roomCount: number; search: StaySearch; className?: string };
 
-const RoomsPageHeader = ({ stayName, stayHref, roomCount, search, maxRooms, maxGuests, className = '' }: Props) => (
+const RoomsPageHeader = ({ stayName, stayHref, roomCount, search, className = '' }: Props) => (
     <header className={`mb-[22px] flex flex-wrap items-end justify-between gap-4 ${className}`}>
         <div className='flex items-center gap-4'>
             <Link
@@ -24,7 +24,7 @@ const RoomsPageHeader = ({ stayName, stayHref, roomCount, search, maxRooms, maxG
                 </p>
             </div>
         </div>
-        <StaySearchButton search={search} maxRooms={maxRooms} maxGuests={maxGuests} />
+        <StaySearchButton search={search} />
     </header>
 );
 
