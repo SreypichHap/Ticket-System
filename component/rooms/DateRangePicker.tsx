@@ -44,7 +44,7 @@ const DateRangePicker = ({ start, end, min, onPick, className = '' }: Props) => 
                 <button type='button' aria-label='Previous month' disabled={!canGoBack} onClick={() => shift(-1)} className={`${NAV} disabled:opacity-30`}>
                     <ChevronLeft size={18} aria-hidden='true' />
                 </button>
-                <p aria-live='polite' className='text-sm font-bold text-[#1A1530]'>
+                <p aria-live='polite' className='text-sm font-semibold text-[#1A1530]'>
                     {monthLabel.format(new Date(Date.UTC(year, month, 1)))}
                 </p>
                 <button type='button' aria-label='Next month' onClick={() => shift(1)} className={NAV}>
@@ -71,7 +71,7 @@ const DateRangePicker = ({ start, end, min, onPick, className = '' }: Props) => 
                             aria-label={dayLabel.format(new Date(`${day}T00:00:00Z`))}
                             onClick={() => pick(day)}
                             className={`h-11 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B21B6] ${
-                                edge ? 'rounded-full bg-[#5B21B6] font-bold text-white' : inside ? 'bg-[#EDE7FB] font-medium text-[#1A1530]' : 'rounded-full text-[#1A1530] hover:bg-[#EDE7FB]'
+                                edge ? 'rounded-full bg-[#5B21B6] font-semibold text-white' : inside ? 'bg-[#EDE7FB] font-medium text-[#1A1530]' : 'rounded-full text-[#1A1530] hover:bg-[#EDE7FB]'
                             } ${disabled ? 'cursor-not-allowed text-[#B8B2C9] hover:bg-transparent' : ''}`}
                         >
                             {Number(day.slice(8))}

@@ -7,11 +7,11 @@ import BackButton from './BackButton';
 import GalleryLightbox from './GalleryLightbox';
 import { HEADING } from './fonts';
 
-type Props = { photos: Photo[]; className?: string; tileClassName?: string };
+type Props = { photos: Photo[]; backHref?: string; className?: string; tileClassName?: string };
 
 const FOCUS = 'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#5B21B6]';
 
-const PhotoGallery = ({ photos, className = '', tileClassName = '' }: Props) => {
+const PhotoGallery = ({ photos, backHref, className = '', tileClassName = '' }: Props) => {
     const [open, setOpen] = useState(false);
     const [index, setIndex] = useState(0);
     const [slide, setSlide] = useState(0);
@@ -28,7 +28,7 @@ const PhotoGallery = ({ photos, className = '', tileClassName = '' }: Props) => 
 
     return (
         <div className={`relative overflow-hidden rounded-[28px] ${className}`}>
-            <BackButton />
+            <BackButton href={backHref} />
 
             {/* Mobile: one full-width swipeable carousel */}
             <div
@@ -39,12 +39,12 @@ const PhotoGallery = ({ photos, className = '', tileClassName = '' }: Props) => 
                     onScroll={(e) => setSlide(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}
                 >
                     {photos.map((photo, i) => (
-                        <button key={photo.src} type='button' onClick={() => show(i)} aria-label={`Open photo ${i + 1} of ${total}`} className={`${tile} aspect-[4/3] w-full shrink-0 snap-start ${FOCUS}`}>
+                        <button key={`${i}-${photo.src}`} type='button' onClick={() => show(i)} aria-label={`Open photo ${i + 1} of ${total}`} className={`${tile} aspect-[4/3] w-full shrink-0 snap-start ${FOCUS}`}>
                             <Image src={photo.src} alt={photo.alt} fill sizes='100vw' priority={i === 0} className='object-cover' />
                         </button>
                     ))}
                 </div>
-                <p className='pointer-events-none absolute bottom-4 right-4 rounded-full bg-black/70 px-3 py-1 text-sm font-bold text-white' aria-hidden='true'>
+                <p className='pointer-events-none absolute bottom-4 right-4 rounded-full bg-black/70 px-3 py-1 text-sm font-semibold text-white' aria-hidden='true'>
                     {slide + 1} / {total}
                 </p>
             </div>
@@ -59,11 +59,11 @@ const PhotoGallery = ({ photos, className = '', tileClassName = '' }: Props) => 
                 {side.map((photo, i) => {
                     const isMore = i === 3 && more > 0;
                     return (
-                        <button key={photo.src} type='button' onClick={() => show(i + 1)} aria-label={isMore ? `Show ${more} more photos` : `Open photo ${i + 2}`} className={`${tile} ${FOCUS}`}>
+                        <button key={`${i}-${photo.src}`} type='button' onClick={() => show(i + 1)} aria-label={isMore ? `Show ${more} more photos` : `Open photo ${i + 2}`} className={`${tile} ${FOCUS}`}>
                             <Image src={photo.src} alt={photo.alt} fill sizes='300px' className='object-cover' />
                             {isMore && (
                                 <span className='absolute inset-0 flex flex-col items-center justify-center bg-black/45 text-white'>
-                                    <span className={`${HEADING} text-[28px] leading-none`}>+{more}</span>
+                                    <span className={`${HEADING} text-2xl leading-none`}>+{more}</span>
                                     <span className='text-sm font-medium'>more photos</span>
                                 </span>
                             )}

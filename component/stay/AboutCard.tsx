@@ -8,7 +8,7 @@ const AboutCard = ({ paragraphs, className = '' }: Props) => (
         <h2 className={`${HEADING} mb-2.5 text-xl text-[#1A1530]`}>About this stay</h2>
         <ClampedText>
             {paragraphs.map((p) => (
-                <p key={p} className='text-base leading-relaxed text-[#3F3A52]'>
+                <p key={p} className='text-sm leading-7 text-[#3F3A52]'>
                     {p}
                 </p>
             ))}

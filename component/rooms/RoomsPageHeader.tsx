@@ -5,9 +5,9 @@ import { plural } from '@/lib/stay-search';
 import StaySearchButton from './StaySearchButton';
 import { HEADING } from '../stay/fonts';
 
-type Props = { stayName: string; stayHref: string; roomCount: number; search: StaySearch; className?: string };
+type Props = { stayName: string; stayHref: string; roomCount: number; search: StaySearch; maxRooms?: number; maxGuests?: number; className?: string };
 
-const RoomsPageHeader = ({ stayName, stayHref, roomCount, search, className = '' }: Props) => (
+const RoomsPageHeader = ({ stayName, stayHref, roomCount, search, maxRooms, maxGuests, className = '' }: Props) => (
     <header className={`mb-[22px] flex flex-wrap items-end justify-between gap-4 ${className}`}>
         <div className='flex items-center gap-4'>
             <Link
@@ -18,13 +18,13 @@ const RoomsPageHeader = ({ stayName, stayHref, roomCount, search, className = ''
                 <ArrowLeft size={20} aria-hidden='true' />
             </Link>
             <div>
-                <h1 className={`${HEADING} text-[34px] leading-tight text-[#1A1530]`}>Select room</h1>
-                <p className='text-[15px] text-[#5E5775]'>
+                <h1 className={`${HEADING} text-2xl leading-tight md:text-[32px] text-[#1A1530]`}>Select room</h1>
+                <p className='text-sm text-[#5E5775]'>
                     {stayName} · {plural(roomCount, 'room')}
                 </p>
             </div>
         </div>
-        <StaySearchButton search={search} />
+        <StaySearchButton search={search} maxRooms={maxRooms} maxGuests={maxGuests} />
     </header>
 );
 
